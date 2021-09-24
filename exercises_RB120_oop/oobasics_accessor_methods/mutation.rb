@@ -6,7 +6,8 @@ class Person
   end
   
   def name
-    @name.chars.join
+    #@name.chars.join
+    @name.clone #from their solution
   end
 end
 
