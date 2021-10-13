@@ -3,13 +3,12 @@ extras
   # keep track of cards in play and still in the deck
 =end
 
-#breadcrumbs start with dealer show cards, need to keep one hidden
+GOAL = 21
+
 require "pry"
 class Hand
   include Comparable
-  
-  attr_accessor :cards, :total
-  
+
   def initialize
     @cards = []
     @total = nil
@@ -32,6 +31,28 @@ class Hand
     total = sum
   end
   
+  def show_hand
+    cards.each do |card|
+      card.show_card
+    end
+  end
+  
+  def show_hidden_cards
+    cards.each do |card|
+      card.show_hidden_card
+    end
+    puts "The total is --- #{total_value}"
+  end
+  
+  protected
+  
+  def <=>(other_hand)
+    total_value <=> other_hand.total_value
+  end
+  
+  private
+  attr_accessor :cards, :total
+  
   def sum
     s = 0
     cards.each do |card|
@@ -53,27 +74,10 @@ class Hand
     cards.any?{|card| card.eleven?}
   end
   
-  def show_hand
-    cards.each do |card|
-      card.show_card
-    end
-  end
-  
-  def show_hidden_cards
-    cards.each do |card|
-      card.show_hidden_card
-    end
-    puts "The total is --- #{total_value}"
-  end
-  
-  def <=>(other_hand)
-    total_value <=> other_hand.total_value
-  end
 end
 
 class Card
-  attr_accessor :value, :suit, :hide
-  attr_reader :name
+  attr_accessor :value
   
   def initialize(name, suit)
     @name = name
@@ -82,22 +86,8 @@ class Card
     @value = get_value
   end
   
-  def hidden?
-    @hide
-  end
-  
-  def hide
-    @hide = true
-  end
-  
-  def get_value
-    if (2..10).include?(name.to_i)
-      return name.to_i
-    elsif name == "A"
-      return 11
-    else
-      return 10
-    end
+  def hide_card
+    self.hide = true
   end
   
   def eleven_to_one
@@ -123,6 +113,24 @@ class Card
   
   def show_hidden_card
     puts self
+  end
+  
+  private
+  attr_writer :hide
+  attr_reader :name, :suit
+  
+  def get_value
+    if (2..10).include?(name.to_i)
+      return name.to_i
+    elsif name == "A"
+      return 11
+    else
+      return 10
+    end
+  end
+  
+  def hidden?
+    @hide
   end
 end
 
@@ -167,13 +175,13 @@ class Deck
   def deal_a_facedown_card
     card = deck.pop
     known_cards << card
-    card.hide
+    card.hide_card
     card
   end
 end
 
 class Participant
-  attr_accessor :hand, :deck
+  attr_reader :hand
   
   def initialize(deck)
     @hand = Hand.new
@@ -185,7 +193,7 @@ class Participant
   end
   
   def busted?
-    total > 21
+    total > GOAL
   end
   
   def total
@@ -196,43 +204,48 @@ class Participant
     hand << card
   end
   
+  private
   
+  attr_writer :hand
+  attr_reader :deck
 end
 
 class Player < Participant
   def show_hand
-    puts "Your hand total is --- #{hand.total_value}"
-    puts "and you have the following cards:"
+    puts "You have the following cards:"
     hand.show_hand
+    puts "The total is --- #{total}"
   end
 end
 
 class Dealer < Participant
   HAND_DEALER_STOPS_AT = 17
+  
   def show_hand
     puts "The Dealer has the following cards:"
     hand.show_hand
   end
   
-  def show_hidden_cards
-    puts "Dealer has these cards:"
-    hand.show_hidden_cards
-  end
-  
   def strategy
     show_hidden_cards
     loop do
-      break if hand.total_value > HAND_DEALER_STOPS_AT || busted?
+      break if total > HAND_DEALER_STOPS_AT || busted?
       puts "The dealer has less then #{HAND_DEALER_STOPS_AT}, so the dealer hits."
       hit
       puts
       show_hidden_cards
     end
   end
+  
+  private
+  
+  def show_hidden_cards
+    puts "Dealer has these cards:"
+    hand.show_hidden_cards
+  end
 end
 
 class Game21
-  attr_accessor :player, :dealer, :deck
   
   def initialize
     @deck = Deck.new
@@ -251,6 +264,9 @@ class Game21
     goodbye_message
   end
   
+  private
+  attr_reader :dealer, :player, :deck
+  
   def keep_playing?
     answer = nil
     loop do
@@ -267,9 +283,7 @@ class Game21
     deal_cards
     show_cards
     player_turn
-    puts
     dealers_turn unless player.busted?
-    puts
     determine_winner
     puts "--------------------------"
   end
@@ -293,9 +307,9 @@ class Game21
   end
   
   def show_cards
-    player.show_hand
-    puts
     dealer.show_hand
+    puts
+    player.show_hand
     puts
   end
   
@@ -306,6 +320,7 @@ class Game21
       player.hit
       puts
       player.show_hand
+      puts
       break if player.busted?
     end
   end
@@ -323,6 +338,7 @@ class Game21
   
   def dealers_turn
     dealer.strategy
+    puts 
   end
   
   def determine_winner
@@ -362,43 +378,3 @@ end
 
 game = Game21.new
 game.play
-
-# ace_hearts = Card.new("A", "Hearts")
-# eight      = Card.new("8", "Spades")
-# king_clubs = Card.new("K", "Clubs")
-# p ace_hearts.value
-# p ace_hearts.suit
-# p ace_hearts.ace?
-# p ace_hearts.eleven_to_one
-# p ace_hearts.value
-
-# deck1 = Deck.new
-# deck1.shuffle
-# deck1.show_deck
-# p deck1.deck.size
-# p deck1.deal_a_card
-# p deck1.deck.size
-# p deck1.known_cards
-
-# players_hand = Hand.new
-# players_hand << ace_hearts
-# players_hand << eight
-# players_hand << king_clubs
-# puts "before totaling hand"
-# players_hand.show_hand
-# p players_hand.has_aces_as_elevens?
-# p players_hand.total_value
-# puts "after totaling hand"
-# players_hand.show_hand
-# p players_hand.has_aces_as_elevens?
-# p players_hand.total_value
-
-# me = Player.new(deck1)
-# me.hit
-# me.hit
-# me.show_hand
-
-# dealer = Dealer.new(deck1)
-# dealer.hand << deck1.deal_a_facedown_card
-# dealer.hit
-# dealer.show_hand

@@ -1,0 +1,39 @@
+# ace_hearts = Card.new("A", "Hearts")
+# eight      = Card.new("8", "Spades")
+# king_clubs = Card.new("K", "Clubs")
+# p ace_hearts.value
+# p ace_hearts.suit
+# p ace_hearts.ace?
+# p ace_hearts.eleven_to_one
+# p ace_hearts.value
+
+# deck1 = Deck.new
+# deck1.shuffle
+# deck1.show_deck
+# p deck1.deck.size
+# p deck1.deal_a_card
+# p deck1.deck.size
+# p deck1.known_cards
+
+# players_hand = Hand.new
+# players_hand << ace_hearts
+# players_hand << eight
+# players_hand << king_clubs
+# puts "before totaling hand"
+# players_hand.show_hand
+# p players_hand.has_aces_as_elevens?
+# p players_hand.total_value
+# puts "after totaling hand"
+# players_hand.show_hand
+# p players_hand.has_aces_as_elevens?
+# p players_hand.total_value
+
+# me = Player.new(deck1)
+# me.hit
+# me.hit
+# me.show_hand
+
+# dealer = Dealer.new(deck1)
+# dealer.hand << deck1.deal_a_facedown_card
+# dealer.hit
+# dealer.show_hand
