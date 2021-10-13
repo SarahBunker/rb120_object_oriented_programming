@@ -43,6 +43,7 @@ class Board
   def winning_marker
     WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
+      p "found winning line on #{line}." if two_identical_markers_plus_blank?(squares)
       if three_identical_markers?(squares)
         return squares.first.marker
       end
@@ -54,6 +55,8 @@ class Board
     (1..9).each { |key| @squares[key] = Square.new }
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def draw
     puts "     |     |"
     puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
@@ -66,6 +69,37 @@ class Board
     puts "     |     |"
     puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
     puts "     |     |"
+  end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+  
+  def two_identical_markers_plus_blank?(squares)
+    blank_space = squares.any?(&:unmarked?)
+    markers = squares.select(&:marked?).collect(&:marker)
+    return false if markers.size != 2
+    markers.uniq.size == 1 && blank_space
+  end
+  
+  def count_marks(squares)
+    tally_hash = {}
+    squares.collect(&:marker).each do |char|
+      if tally_hash.key?(char)
+        tally_hash[char] += 1
+      else
+        tally_hash[char] = 1
+      end
+    end
+    tally_hash
+  end
+  
+  def winnable_line
+    WINNING_LINES.each do |line|
+      squares = @squares.values_at(*line)
+      if two_identical_markers_plus_blank?(squares)
+        return line
+      end
+    end
+    nil
   end
 
   private
@@ -100,10 +134,19 @@ class Square
 end
 
 class Player
-  attr_reader :marker
+  attr_reader :marker, :score
 
   def initialize(marker)
     @marker = marker
+    @score  = 0
+  end
+
+  def reset_score
+    @score = 0
+  end
+  
+  def point
+    @score += 1
   end
 end
 
@@ -124,25 +167,54 @@ class TTTGame
   def play
     clear
     display_welcome_message
-
-    loop do
-      display_board
-
-      loop do
-        current_player_moves
-        break if board.someone_won? || board.full?
-        clear_screen_and_display_board if human_turn?
-      end
-
-      display_result
-      break unless play_again?
-      reset
-      display_play_again_message
-    end
+    main_game
     display_goodbye_message
   end
 
   private
+
+  def main_game
+    loop do
+      match_game
+      break unless match_winner? && play_another_match? 
+      reset_scores
+      reset
+      puts "May the odds be ever in your favor."
+    end
+  end
+
+  def match_game
+    loop do
+      display_board
+      player_move
+      display_result
+      update_score
+      if match_winner?
+        display_match_winner
+        break
+      end
+      break unless play_again?
+      reset
+      display_play_again_message
+    end
+  end
+
+  def match_winner?
+    human.score >= 5 || computer.score >= 5
+  end
+
+  def display_match_winner
+    puts "You won this match." if human.score == 5
+    puts "Sorry the computer won this match." if computer.score == 5
+  end
+
+  def player_move
+    loop do
+      current_player_moves
+      break if board.someone_won? || board.full?
+      clear_screen_and_display_board if human_turn?
+    end
+  end
 
   def display_welcome_message
     puts "Welcome to Tic Tac Toe"
@@ -164,6 +236,7 @@ class TTTGame
   end
 
   def display_board
+    puts "Lets play a match, first person to 5 game wins, wins the match."
     puts "You are a #{human.marker}. The computer is a #{computer.marker}."
     puts
     board.draw
@@ -171,7 +244,7 @@ class TTTGame
   end
 
   def human_moves
-    puts "Choose a square (#{board.unmarked_keys.join(', ')}): "
+    puts "Choose a square (#{display_choices(board.unmarked_keys)}): "
     square = nil
     loop do
       square = gets.chomp.to_i
@@ -179,6 +252,17 @@ class TTTGame
       puts "Sorry, not a valid choice."
     end
     board[square] = human.marker
+  end
+  
+  def display_choices(arr, delimiter = ', ', word='or')
+    case arr.size
+    when 0 then ''
+    when 1 then arr.first
+    when 2 then arr.join(" #{word} ")
+    else
+      arr[-1] = "#{word} #{arr.last}"
+      arr.join(delimiter)
+    end
   end
 
   def computer_moves
@@ -207,6 +291,26 @@ class TTTGame
       puts "It's a tie."
     end
   end
+  
+  def update_score
+    case board.winning_marker
+    when HUMAN_MARKER
+      human.point
+    when COMPUTER_MARKER
+      computer.point
+    end
+
+    display_score
+  end
+
+  def display_score
+    puts "The score is #{human.score} : #{computer.score}."
+  end
+
+  def reset_scores
+    human.reset_score
+    computer.reset_score
+  end
 
   def play_again?
     answer = nil
@@ -216,7 +320,17 @@ class TTTGame
       break if ["y", "n"].include?(answer)
       puts "Sorry, must be 'y' or 'n'"
     end
-
+    answer == "y"
+  end
+  
+  def play_another_match?
+    answer = nil
+    loop do
+      puts "Would you like to play another match? (y/n)"
+      answer = gets.chomp.downcase
+      break if ["y", "n"].include?(answer)
+      puts "Sorry, must be 'y' or 'n'"
+    end
     answer == "y"
   end
 
