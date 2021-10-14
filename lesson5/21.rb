@@ -1,9 +1,20 @@
 =begin
 extras
   # keep track of cards in play and still in the deck
+  # display cards as ASCII art instead of a sentance
+-------
+|    A|
+|     |
+|     |
+-------
 =end
 
+#breadcrumbs, working on a larger deck, fix array error
+#sometimes card was nil, I think I fixed it by adding bounds to where the cut card can be placed.
+
 GOAL = 21
+NUM_DECKS = 4
+NUM_PLAYERS = 2
 
 require "pry"
 class Hand
@@ -141,34 +152,38 @@ class Deck
   SUITS = %w(Spades Clubs Hearts Diamonds)
   
   def initialize
+    self.known_cards = []
     new_deck
-    @known_cards = []
   end
   
   def new_deck
     array_cards = []
-    CARD_NAMES.each do |name|
-      SUITS.each do |suit|
-        array_cards << Card.new(name, suit)
+    self.known_cards = []
+    NUM_DECKS.times do
+      CARD_NAMES.each do |name|
+        SUITS.each do |suit|
+          array_cards << Card.new(name, suit)
+        end
       end
     end
-    @deck = array_cards
-    shuffle
-  end
-  
-  def show_deck
-    deck.each do |card|
-      card.show_card
-    end
-  end
-  
-  def shuffle
+    self.deck = array_cards
     deck.shuffle!
+    self.cut_card = cut_card_method
+  end
+  
+  def check_cards_left_in_deck
+    if cut_card_reached?
+      puts "The dealer reached the cut card during the last hand, so a new shuffled deck will be used."
+      new_deck
+    end
   end
   
   def deal_a_card
     card = deck.pop
     known_cards << card
+    if card.class == Array || card.class == NilClass
+      binding.pry
+    end
     card
   end
   
@@ -177,6 +192,33 @@ class Deck
     known_cards << card
     card.hide_card
     card
+  end
+  
+  private
+  
+  attr_accessor :cut_card
+
+  def cut_card_method
+    min = max_cards_one_round(NUM_DECKS,NUM_PLAYERS)
+    (min..deck.size - min).to_a.sample
+  end
+  
+  def cut_card_reached?
+    deck.size <= cut_card
+  end
+  
+  def max_cards_one_round(num_decks, num_players)
+    total = 0
+    num_cards = 0
+    num_of_same_value = 4*num_decks
+    (1..10).to_a.each do |value|
+      num_of_same_value.times do
+        break if total > 21
+        num_cards += 1
+        total += value
+      end
+    end
+    num_cards * num_players
   end
 end
 
@@ -260,6 +302,7 @@ class Game21
       round
       break unless keep_playing?
       reset_hands
+      deck.check_cards_left_in_deck
     end
     goodbye_message
   end
@@ -375,6 +418,9 @@ class Game21
     puts "It's a tie. At least you don't have to pay."
   end
 end
+
+# deck1 = Deck.new
+# p deck1.deck.size
 
 game = Game21.new
 game.play
