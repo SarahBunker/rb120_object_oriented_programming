@@ -84,13 +84,11 @@ class Hand
 end
 
 class Card
-  attr_accessor :value
-
   def initialize(name, suit)
     @name = name
     @suit = suit
     @hide = false
-    @value = get_value
+    @value = value
   end
 
   def hide_card
@@ -122,19 +120,15 @@ class Card
     puts self
   end
 
+  def value
+    return name.to_i if (2..10).include?(name.to_i)
+    name == "A" ? 11 : 10
+  end
+
   private
+
   attr_writer :hide
   attr_reader :name, :suit
-
-  def get_value
-    if (2..10).include?(name.to_i)
-      return name.to_i
-    elsif name == "A"
-      return 11
-    else
-      return 10
-    end
-  end
 
   def hidden?
     @hide
@@ -153,6 +147,12 @@ class Deck
   end
 
   def new_deck
+    self.deck = init_deck
+    deck.shuffle!
+    self.cut_card = cut_card_method
+  end
+
+  def init_deck
     array_cards = []
     self.known_cards = []
     NUM_DECKS.times do
@@ -162,22 +162,20 @@ class Deck
         end
       end
     end
-    self.deck = array_cards
-    deck.shuffle!
-    self.cut_card = cut_card_method
+    array_cards
   end
 
   def check_cards_left_in_deck
-    if cut_card_reached?
-      puts "The dealer reached the cut card during the last hand, so a new shuffled deck will be used."
-      new_deck
-    end
+    return unless cut_card_reached?
+    puts "The dealer reached the cut card during the last hand."
+    puts "A new shuffled deck will be used for the next round."
+    new_deck
   end
 
   def deal_a_card
     card = deck.pop
     known_cards << card
-    if card.class == Array || card.class == NilClass
+    if card.instance_of?(Array) || card.instance_of?(NilClass)
       binding.pry
     end
     card
@@ -195,7 +193,7 @@ class Deck
   attr_accessor :cut_card
 
   def cut_card_method
-    min = max_cards_one_round(NUM_DECKS,NUM_PLAYERS)
+    min = max_cards_one_round(NUM_DECKS, NUM_PLAYERS)
     (min..deck.size - min).to_a.sample
   end
 
@@ -204,9 +202,14 @@ class Deck
   end
 
   def max_cards_one_round(num_decks, num_players)
+    num_of_same_value = 4 * num_decks
+    num_cards = count_ace_to_10(num_of_same_value)
+    num_cards * num_players
+  end
+
+  def count_ace_to_ten(num_of_same_value)
     total = 0
     num_cards = 0
-    num_of_same_value = 4*num_decks
     (1..10).to_a.each do |value|
       num_of_same_value.times do
         break if total > 21
@@ -214,7 +217,7 @@ class Deck
         total += value
       end
     end
-    num_cards * num_players
+    num_cards
   end
 end
 
@@ -268,7 +271,7 @@ class Dealer < Participant
     show_hidden_cards
     loop do
       break if total > HAND_DEALER_STOPS_AT || busted?
-      puts "The dealer has less then #{HAND_DEALER_STOPS_AT}, so the dealer hits."
+      puts "The dealer has less then #{HAND_DEALER_STOPS_AT}, so they hits."
       hit
       puts
       show_hidden_cards
@@ -284,11 +287,11 @@ class Dealer < Participant
 end
 
 class Game21
-
   def initialize
     @deck = Deck.new
     @player = Player.new(deck)
     @dealer = Dealer.new(deck)
+    @choice = nil
   end
 
   def play
@@ -303,6 +306,7 @@ class Game21
   end
 
   private
+
   attr_reader :dealer, :player, :deck
 
   def keep_playing?
@@ -353,7 +357,7 @@ class Game21
 
   def player_turn
     loop do
-      answer = get_choice
+      answer = choice
       break if answer == "stay"
       player.hit
       puts
@@ -363,7 +367,7 @@ class Game21
     end
   end
 
-  def get_choice
+  def choice
     answer = nil
     loop do
       puts "Do you want to (hit) or (stay)?"
@@ -376,7 +380,7 @@ class Game21
 
   def dealers_turn
     dealer.strategy
-    puts 
+    puts
   end
 
   def determine_winner
@@ -386,21 +390,19 @@ class Game21
     elsif dealer.busted?
       puts "The dealer busted."
       player_won
+    elsif player.hand > dealer.hand
+      player_won
+    elsif dealer.hand > player.hand
+      dealer_won
     else
-      if player.hand > dealer.hand
-        player_won
-      elsif dealer.hand > player.hand
-        dealer_won
-      else
-        noone_won
-      end
+      noone_won
     end
   end
 
   def goodbye_message
     puts "Thanks for playing."
   end
-  
+
   def player_won
     puts "You won this game! The dealer's turn to pay."
   end
