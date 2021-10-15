@@ -1,3 +1,4 @@
+# https://www.neverstopbuilding.com/blog/minimax
 require "pry"
 
 module MiniMaxModule
