@@ -35,8 +35,7 @@ class Hand
 
   def total_value
     sum
-    while total > 21
-      break unless aces_as_elevens?
+    while total > GOAL && aces_as_elevens?
       ace_to_one
     end
     total
@@ -84,11 +83,13 @@ class Hand
 end
 
 class Card
+  attr_reader :value
+
   def initialize(name, suit)
     @name = name
     @suit = suit
     @hide = false
-    @value = value
+    @value = initial_value
   end
 
   def hide_card
@@ -96,7 +97,8 @@ class Card
   end
 
   def eleven_to_one
-    self.value = 1 if ace?
+    self.value = 1 #if ace?
+    binding.pry
   end
 
   def ace?
@@ -120,7 +122,7 @@ class Card
     puts self
   end
 
-  def value
+  def initial_value
     return name.to_i if (2..10).include?(name.to_i)
     name == "A" ? 11 : 10
   end
@@ -129,6 +131,7 @@ class Card
 
   attr_writer :hide
   attr_reader :name, :suit
+  attr_writer :value
 
   def hidden?
     @hide
@@ -203,7 +206,7 @@ class Deck
 
   def max_cards_one_round(num_decks, num_players)
     num_of_same_value = 4 * num_decks
-    num_cards = count_ace_to_10(num_of_same_value)
+    num_cards = count_ace_to_ten(num_of_same_value)
     num_cards * num_players
   end
 
@@ -256,6 +259,8 @@ class Player < Participant
     puts "You have the following cards:"
     hand.show_hand
     puts "The total is --- #{total}"
+    binding.pry
+    puts 
   end
 end
 
