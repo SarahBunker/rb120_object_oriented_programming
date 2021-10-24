@@ -5,33 +5,25 @@ class FixedArray
   attr_reader :length
   attr_accessor :array
   
-  def initialize(num)
-    @length = num
-    @array = Array.new(length)
+  def initialize(max_size)
+    @array = Array.new(max_size)
   end
   
   def [](index)
-    array[index]
+    @array.fetch(index)
   end
   
   def []=(index,value)
-    array[index] = value
+    self[index]
+    @array[index] = value
   end
   
   def to_a
-    array
+    @array.clone
   end
   
   def to_s
-    temp_array = []
-    array.each do |ele|
-      if ele == nil
-        temp_array << "nil"
-      else 
-        temp_array << "\"#{ele}\""
-      end
-    end
-    "[#{temp_array.join(", ")}]"
+    to_a.to_s
   end
 end
 

@@ -13,11 +13,9 @@ class Graduate < Student
 end
 
 class Undergraduate < Student
-  def initialize(name, year)
-    super
-    @parking = false
-  end
 end
 
 peter = Graduate.new("Peter","Senior",true)
 sarah = Undergraduate.new("Sarah","Freshman")
+p peter
+p sarah
