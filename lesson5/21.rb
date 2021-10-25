@@ -9,9 +9,6 @@ extras
 -------
 =end
 
-# breadcrumbs, working on a larger deck, fix array error
-# sometimes card was nil, I think I fixed it by adding bounds cut card
-
 GOAL = 21
 NUM_DECKS = 4
 NUM_PLAYERS = 2
@@ -108,9 +105,6 @@ class Card
 
   def show_card
     puts hidden? ? "   Face Down Card" : self
-    #FIX ME ^ work?
-    # puts self unless hidden?
-    # puts "   Face Down Card" if hidden?
   end
 
   def show_hidden_card
@@ -200,13 +194,12 @@ class Deck
 
   def max_cards_one_round(num_decks, num_players)
     num_of_same_value = 4 * num_decks
-    num_cards = min_cards_one_hand(num_of_same_value)
+    num_cards = one_hand_max_cards_before_bust(num_of_same_value)
     num_cards * num_players
   end
 
-  def min_cards_one_hand(num_of_same_value)
+  def one_hand_max_cards_before_bust(num_of_same_value)
     total = 0
-    #might be able to use reduce method to shorten this method.
     num_cards = 0
     (1..10).to_a.each do |value|
       num_of_same_value.times do
@@ -258,7 +251,6 @@ class Player < Participant
     puts "You have the following cards:"
     hand.show_hand
     show_total
-    puts 
   end
 end
 
@@ -421,9 +413,6 @@ class Game21
     puts "It's a tie. At least you don't have to pay."
   end
 end
-
-# deck1 = Deck.new
-# p deck1.deck.size
 
 game = Game21.new
 game.play
