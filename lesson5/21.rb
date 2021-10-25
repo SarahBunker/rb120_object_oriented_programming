@@ -34,7 +34,7 @@ class Hand
   end
 
   def total_value
-    sum
+    calculate_sum
     while total > GOAL && aces_as_elevens?
       ace_to_one
     end
@@ -47,7 +47,6 @@ class Hand
 
   def show_hidden_cards
     cards.each(&:show_hidden_card)
-    puts "The total is --- #{total_value}"
   end
 
   protected
@@ -60,7 +59,7 @@ class Hand
 
   attr_accessor :cards, :total
 
-  def sum
+  def calculate_sum
     s = 0
     cards.each do |card|
       s += card.value
@@ -72,6 +71,7 @@ class Hand
     cards.each do |card|
       if card.ace? && card.eleven?
         card.eleven_to_one
+        calculate_sum
         break
       end
     end
@@ -97,8 +97,7 @@ class Card
   end
 
   def eleven_to_one
-    self.value = 1 #if ace?
-    binding.pry
+    self.value = 1
   end
 
   def ace?
@@ -114,6 +113,8 @@ class Card
   end
 
   def show_card
+    #puts hidden? ? "   Face Down Card" : self
+    #FIX ME ^ work?
     puts self unless hidden?
     puts "   Face Down Card" if hidden?
   end
@@ -178,9 +179,6 @@ class Deck
   def deal_a_card
     card = deck.pop
     known_cards << card
-    if card.instance_of?(Array) || card.instance_of?(NilClass)
-      binding.pry
-    end
     card
   end
 
@@ -190,6 +188,8 @@ class Deck
     card.hide_card
     card
   end
+  
+  #the two methods above do a lot, simplify methods, split into more methods.
 
   private
 
@@ -206,12 +206,13 @@ class Deck
 
   def max_cards_one_round(num_decks, num_players)
     num_of_same_value = 4 * num_decks
-    num_cards = count_ace_to_ten(num_of_same_value)
+    num_cards = min_cards_one_hand(num_of_same_value)
     num_cards * num_players
   end
 
-  def count_ace_to_ten(num_of_same_value)
+  def min_cards_one_hand(num_of_same_value)
     total = 0
+    #might be able to use reduce method to shorten this method.
     num_cards = 0
     (1..10).to_a.each do |value|
       num_of_same_value.times do
@@ -247,6 +248,10 @@ class Participant
   def new_card(card)
     hand << card
   end
+  
+  def show_total
+    puts "The total is --- #{total}"
+  end
 
   private
 
@@ -258,8 +263,7 @@ class Player < Participant
   def show_hand
     puts "You have the following cards:"
     hand.show_hand
-    puts "The total is --- #{total}"
-    binding.pry
+    show_total
     puts 
   end
 end
@@ -274,12 +278,14 @@ class Dealer < Participant
 
   def strategy
     show_hidden_cards
+    show_total
     loop do
-      break if total > HAND_DEALER_STOPS_AT || busted?
-      puts "The dealer has less then #{HAND_DEALER_STOPS_AT}, so they hits."
+      break if total >= HAND_DEALER_STOPS_AT || busted?
+      puts "The dealer has less then #{HAND_DEALER_STOPS_AT}, so they hit."
       hit
       puts
       show_hidden_cards
+      show_total
     end
   end
 
@@ -384,6 +390,7 @@ class Game21
   end
 
   def dealers_turn
+    puts "---Dealer's Turn---"
     dealer.strategy
     puts
   end
