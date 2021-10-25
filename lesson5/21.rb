@@ -22,7 +22,6 @@ class Hand
 
   def initialize
     @cards = []
-    @total = nil
   end
 
   def reset
@@ -34,7 +33,6 @@ class Hand
   end
 
   def total_value
-    calculate_sum
     while total > GOAL && aces_as_elevens?
       ace_to_one
     end
@@ -57,21 +55,17 @@ class Hand
 
   private
 
-  attr_accessor :cards, :total
+  attr_accessor :cards
+  attr_writer :total
 
-  def calculate_sum
-    s = 0
-    cards.each do |card|
-      s += card.value
-    end
-    self.total = s
+  def total
+    self.total = cards.reduce(0) { |sum,card| card.value + sum}
   end
 
   def ace_to_one
     cards.each do |card|
       if card.ace? && card.eleven?
         card.eleven_to_one
-        calculate_sum
         break
       end
     end
@@ -113,10 +107,10 @@ class Card
   end
 
   def show_card
-    #puts hidden? ? "   Face Down Card" : self
+    puts hidden? ? "   Face Down Card" : self
     #FIX ME ^ work?
-    puts self unless hidden?
-    puts "   Face Down Card" if hidden?
+    # puts self unless hidden?
+    # puts "   Face Down Card" if hidden?
   end
 
   def show_hidden_card
