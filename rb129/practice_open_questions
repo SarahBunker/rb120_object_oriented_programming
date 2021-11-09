@@ -1,0 +1,33 @@
+Why do we use OOP?
+
+What are classes and objects? How do you create an object?
+
+How is a class defined?
+
+What are the attr_* and what are they used for?
+
+How do you call getter and setter methods?
+
+What is an instance method vs a class method?
+
+What is method access control?
+
+What is the difference between referencing and setting an instance method directly vs using getter and setter methods?
+
+What is class inheritance?
+
+Explain what `super` is and how it is used.
+
+What is encapsulation?
+
+What is polymorphism?
+
+What are Modules? How are modules defined?
+
+What is a module method?
+
+What is the method lookup path?
+
+What is self?
+
+
