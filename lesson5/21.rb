@@ -7,6 +7,7 @@ extras
 |     |
 |     |
 -------
+betting
 =end
 
 GOAL = 21
@@ -118,9 +119,8 @@ class Card
 
   private
 
-  attr_writer :hide
+  attr_writer :hide, :value
   attr_reader :name, :suit
-  attr_writer :value
 
   def hidden?
     @hide
@@ -176,8 +176,6 @@ class Deck
     card.hide_card
     card
   end
-  
-  #the two methods above do a lot, simplify methods, split into more methods.
 
   private
 
