@@ -1,0 +1,196 @@
+**1. What is OOP and why is it important?**
+OOP programming is using classes and objects to encapsulate code. By grouping common behaviors as methods in classes code becomes easier to maintain and less dependent. Linear programming has all of the code interrelated and OOP programming allows for much larger applications because the code is less codependant.
+ >> rework
+OOP programming is grouping code in classes which you can instantiate objects from. The code is protected from interference from other code by encapsulation. Polymorphism allows different objects to react to the same method call even if they are from different classes which reduces repeated code. OOP code has less dependancies and is therefore more maintainable because the code is captured in smaller units.
+
+**2. What is encapsulation?**
+Encapsulation is restricting access to data and methods. This is done by creating objects that store the state and exposing interfaces through methods. Method access control also plays a role in Encapsulation because methods can be made private or protected which allows access from within the instance or other instances of the class or subclass without exposing the methods and data to public interface. An example of Encapsulation is:
+```
+class Cat
+  def intialize(name)
+    @name = name
+  end
+end
+
+tabby = Cat.new("Tabs")
+```
+In this example we have a class `Cat` and the object `tabby` encapsulates the state of the `name`, and access is restricted because there is no method to access this instance variable.
+
+>> rework
+Encapsulation is restricting access to data and methods from parts of the code base. In Ruby this is done by creating objects and exposing methods to interact with them. An object that has an instance variable, but no method to interact with that instance variable has encapsulated that infomation as in the following.
+```code```
+Encapsulation reduces the dependencies and makes code more maintainable. The code is contained within that unit so debugging is easier. Only having the nessary methods public makes using the code less complex. The inner workings of how an object returns a value is contained within the method and can be update or changed without rippling into the rest of the code.
+
+
+**3. How does encapsulation relate to the public interface of a class?**
+Methods created in a class by default are public meaning they are accessible to the rest of the code. If we want to change the access for a method we can use the key words `private` or `protected`.
+
+**4. What is polymorphism?**
+Polymorphism is when different data types can respond to the same method invocation. For example calling the method `empty?` with a `String`, `Array`, and `Hash`.
+```
+arr = ["123", [1,2,3], {1 => 3}]
+arr.each {|item| puts item.empty?}
+```
+Because `Array` `String` and `Hash` all have access to the method `empty?` even if they are defined in different ways they can all respond to this method. Polymorphism is good because it reduces repeated code which also makes the code more maintainable. It is easier to add another object to an iteration if you just need to ensure that the class the object is instantiated from has the given method defined.
+
+**5. When defining a class, we usually focus on state and behaviors. What is the difference between these two concepts?**
+Classes have states and behaviors where a state is an attribute of an object and a behavior is what the object can do. In Ruby we track the state of an object with instance variables, and the behaviors come from methods. Here is an example of two objects from a class that have different states, but the same behaviors.
+```
+class Robot
+  attr_reader :name
+  def initialize(name)
+    @name = name
+  end
+  
+  def speak
+    puts "Hello, my name is #{name}"
+  end
+end
+
+r2d2 = Robot.new("r2d2")
+c3po = Robot.new("c3po")
+
+r2d2.speak
+c3po.speak
+```
+`c3po` and `r2d2` have different names, but they have the same method `#speak`.
+
+**6. What is a constructor method?**
+A constructor method is a method that is called upon initialization of an object from a class. In Ruby this is the `initialize` method. It is often used to initialize instance variables with arguments passed to the constructor method. For example
+```
+class Robot
+  attr_reader :name
+  def initialize(name)
+    @name = name
+  end
+  
+  def speak
+    puts "Hello, my name is #{name}"
+  end
+end
+
+r2d2 = Robot.new("r2d2")
+c3po = Robot.new("c3po")
+
+r2d2.speak
+c3po.speak
+```
+On line `12` the class method `::new` is called on the `Robot` class passing`"r2d2"` as an argument. This is then passed to the constructor method defined on lines `2-5`. The instance variable `@name` is initialized to the string `"r2d2"`
+
+**7. What is a collaborator object, and what is the purpose of using collaborator objects in OOP?**
+Collaborator objects are when one object is part of the state of another object. This happens frequently since arrays, strings, and numbers are all objects, but this can also happen with custom classes. The benefit of using collaborator objects is being able to model more real situations such as the following code that models a human with a dog as a pet.
+```
+class Human
+  attr_accessor :pet
+  def initialize(name)
+    @name = name
+    @pet = nil
+  end
+end
+
+class Dog
+  attr_reader :name
+  def initialize(name)
+    @name = name
+  end
+  
+  def to_s
+    "My name is #{name}."
+  end
+end
+
+fido = Dog.new("Fido")
+sarah = Human.new("Sarah")
+sarah.pet = fido
+puts sarah.pet
+```
+In this example `fido` is an object of the `Dog` class that is part of `sarah`'s state because it is her pet.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+class GoodDog
+  attr_accessor :name, :height, :weight
+
+  def initialize(n, h, w)
+    @name = n
+    @height = h
+    @weight = w
+  end
+
+  def speak
+    "#{name} says arf!"
+  end
+
+  def change_info(n, h, w)
+    name = n
+    height = h
+    weight = w
+  end
+
+  def info
+    "#{name} weighs #{weight} and is #{height} tall."
+  end
+end
+
+sparky.change_info('Spartacus', '24 inches', '45 lbs')
+puts sparky.info      
+ => Sparky weighs 10 lbs and is 12 inches tall.
+```
+
+**8. Why does the .change_info method not work as expected here?**
+This code shows a common mistake where an instance variable is intialized instead of using the setter method. This code can be fixed by using the keyword self in front of each setter method in the `change_info` method like so.
+```
+class GoodDog
+  ...
+  def change_info(n, h, w)
+    self.name = n
+    self.height = h
+    self.weight = w
+  end
+  ...
+end
+```
+
+**9. What will the following code output?**
+
+class Animal
+  def initialize(name)
+    @name = name
+  end
+
+  def speak
+    puts sound
+  end
+
+  def sound
+    "#{@name} says "
+  end
+end
+
+class Cow < Animal
+  def sound
+    super + "moooooooooooo!"
+  end
+end
+
+daisy = Cow.new("Daisy")
+daisy.speak
+
+This code outputs "Daisy says mooooooooo!" because `speak` is a method inherited from the superclass `Animal` which calls the `sound` method. When the method `sound` is invoked it uses the method lookup path which starts with the current class. `Cow` has a `sound` method, so this method is invoked. Within this method there is a call to `super` which invokes the `sound` method from the superclass `Animal`.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Person
+  attr_writer :first_name, :last_name
+
+  def full_name
+    # omitted code
+  end
+end
+
+mike = Person.new
+mike.first_name = 'Michael'
+mike.last_name = 'Garcia'
+mike.full_name # => 'Michael Garcia'
+
+**10. What code snippet can replace the "omitted code" comment to produce the indicated result?**
+You can replace ommitted code with `@first_name + " " + @last_name`. In this example we must access the instance variables directly because there is not getter method for the variables. To make the code more robust we could also create private getter methods for first_name and last_name, which would make the code more maintainable for future improvements without exposing them to the rest of the codebase.
