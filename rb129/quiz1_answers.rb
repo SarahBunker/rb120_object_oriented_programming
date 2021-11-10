@@ -1,9 +1,16 @@
 #1 Which problems led to the creation of OOP?
 # OOP was created to help solve the problem of large code that was interrealted and hard to maintain. It also allowed for more abstraction, where you could think about a collection of related methods by a name.
 
+# >> large programs can be difficult to maintain because all of the dependecies through the code. OOP programming limits how the different pieces interact which makes it easier to maintain.
+# >> create OOP programming uses things like inheritance makes code more resuable and flexible.
+# >> using real world nouns to represent objects lets programmers solve at a higher level of abstraction and break down and solve complex problems.
+# >> OOP programming is often longer then functional? programming. So they take longer to run.
+
 #2 what is the relationship between classes and objects?
 
 # Objects are instantiated from classes. The class provides a model for the object defining methods avaible to the object. The object stores the state in instance variables.
+
+# Classes inherit from classes, objects don't inherit from classes.
 
 #3 What are modules in Ruby?
 
@@ -182,6 +189,11 @@ daisy.speak
 
 # This code outputs "Daisy says moooooooo!" because the cow class inherits from the Animal class which has the method `#speak`. This method calls the method `sound` which is found in the `Cow` class which calls the method super which looks for the method with the same name starting at the superclass in the method lookup path. The combination of these outputs "Daisy says moooooooooooo!" where `Daisy` was an interpolated instance variable.
 
+# >>
+# `Cow` is a subclass of `Animal` and inherits the method `#speak`. When `#speak` is invoked on `daisy` it calls `#sound` and passes the return value to `puts`. This is an instance of `Cow` calling `#speak` so the method lookup path starts with the `Cow` class where there is a `#speak` method. `Cow#sound` uses `super` to call `Animal#sound` which returns an interpolated string `"Daisy says ".` `Cow#sound` then concatenantes the return value with the string `"moooooo!`" and returns the new value which is outputed by `puts`.
+
+# Why this was hard: I thought since we were using a method in the Animal class that it might call the sound method from the animal class instead of the Cow class. The key point here is that daisy is an object from the Cow class that inherits the methods from the Animal class, so any methods that are called on this object start with that class as the base for the method lookup path.
+
 #12 What is true about `max` and `molly`?
 
 class Cat
@@ -263,6 +275,8 @@ p mike.full_name # => 'Michael Garcia'
 
 # In each of these examples we are accessing the instance variables directly without using a getter method. This is not advised because it makes updating how a variable is displayed much harder.
 
+# >> I missed this the first time I took the quiz because I went to fast and forgot that if I don't have a getter method then I have to access the variable directly using `@`. This kind of question I need to answer the code without looking at the multiple choice and make sure to test code when possible.
+
 # 16 What code can you add to Student class to get the desired result?
 
 class Student
@@ -283,6 +297,8 @@ priya.change_grade('A')
 p priya.grade # => "A"
 
 # To fix this code we needed to add the instance method `change_grade`. This method uses the setter method for `grade` to change the instance variable to the new value.
+
+# >> when retaking this quiz I missed this question because I forgot that we were using a setter method which you can only access using self.method_name or accessing the variable directly. In the open ended question I got it correct. I think I was just tired.
 
 
 # 17 On which lines in the following code does self refer to the instance of the MeMyselfAndI class referenced by i rather than the class itself?
