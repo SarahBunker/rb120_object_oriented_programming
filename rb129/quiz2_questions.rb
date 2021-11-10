@@ -16,8 +16,8 @@ class Cat
 end
 
 mitzi = Cat.new('Mitzi')
-mitzi.jump # => "Mitzi is jumping!"
-Cat.total_cats # => 1
+p mitzi.jump # => "Mitzi is jumping!"
+p Cat.total_cats # => 1
 p "The cat's name is #{mitzi}" # => "The cat's name is Mitzi"
 # 2  Examine the Code and add code so the student object's state matches the shown state
 class Student
@@ -64,7 +64,7 @@ p sir_gallant.name # => "Sir Gallant"
 p sir_gallant.speak # => "Sir Gallant is speaking."
 
 
-# 5 Let's add a Thief class as a subclass of Character. You must make some changes to the above code so that the last two statements return the values shown in the comments. What changes do you need to make?
+# 5 Let's add a Thief class as a subclass of Character. You must make some changes to the code so that the last two statements return the values shown in the comments. What changes do you need to make?
 
 class Character
   attr_accessor :name
@@ -81,11 +81,11 @@ end
 class Thief < Character; end
 
 sneak = Thief.new("Sneak")
-sneak.name # => "Sneak"
-sneak.speak # => "Sneak is whispering..."
+p sneak.name # => "Sneak"
+p sneak.speak # => "Sneak is whispering..."
 
 
-# 6 Make changes to code to make last staments return expected values
+# 6 Make changes to the code to make the last staments return expected values
 
 class FarmAnimal
   def speak

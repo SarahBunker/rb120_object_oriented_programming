@@ -19,7 +19,7 @@
 #7 What are the benefits of class inheritance?
 
 
-#8 In the code below describe in relation to ==,
+#8 Describe the code below in relation to ==,
 class Cat
 end
 
@@ -28,7 +28,7 @@ ginger = Cat.new
 paws = Cat.new
 
 
-#9  Examine the code below. Identify all the superclasses.
+#9  Examine the code below. Identify all the superclasses. Include classes that would be searched in the method lookup path.
 
 class Thing
 end
@@ -39,7 +39,7 @@ end
 class SomethingElse < AnotherThing
 end
 
-#10 Given the following code, select the method lookup path that Ruby will use as a result of the call to the fly method?
+#10 Given the following code, determine the method lookup path that Ruby will use as a result of the call to the fly method?
 
 module Flight
   def fly; end
@@ -92,7 +92,7 @@ end
 daisy = Cow.new("Daisy")
 daisy.speak
 
-#12 What is true about `max` and `molly`?
+#12 What is true about `max` and `molly` in relation to their states and behaviors?
 
 class Cat
   def initialize(name, coloring)
@@ -114,7 +114,7 @@ molly = Cat.new("Molly", "gray")
 
 
 
-# 13  What are @name and @age in the above code?
+# 13  What are @name and @age in this code?
 
 class Person
   def initialize(name, age)
@@ -127,9 +127,9 @@ end
 
 kate = Person.new
 kate.name = 'Kate'
-kate.name # => 'Kate'
+p kate.name # => 'Kate'
 
-# 15 what code can replace omitted code and get the desired result?
+# 15 what code can replace the omitted code and get the desired result?
 
 class Person
   attr_writer :first_name, :last_name
@@ -142,7 +142,7 @@ end
 mike = Person.new
 mike.first_name = 'Michael'
 mike.last_name = 'Garcia'
-mike.full_name # => 'Michael Garcia'
+p mike.full_name # => 'Michael Garcia'
 
 # 16 What code can you add to Student class to get the desired result?
 
@@ -157,7 +157,7 @@ end
 
 priya = Student.new("Priya")
 priya.change_grade('A')
-priya.grade # => "A"
+p priya.grade # => "A"
 
 
 # 17 On which lines in the following code does self refer to the instance of the MeMyselfAndI class referenced by i rather than the class itself?
