@@ -41,6 +41,8 @@ p ade # => #<Student:0x00000002a88ef8 @grade=nil, @name="Adewale">
 
 # In this example we are adding an intialize method which initializes the instance variable `@name` to the value of the `name` variable. We also initialize the instance variable `grade` to `nil`.
 
+# > > creating a getter method and then accessing an unitialized variable returns nil, not because the value of the variable is nil, but because it is unitialized. This means the variable won't be part of the state of the object.
+
 # 3 We now want to add some attr_* methods to our Student class so that we can access and update the state of a Student object. Examine the following Ruby code, add appropriate code to define getters and setters to make examples run as expected.
 
 class Student
