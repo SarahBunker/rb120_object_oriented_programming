@@ -37,12 +37,12 @@ p str1.object_id == str2.object_id #true  compares if same object
 
 # 4 Which of the following expressions are guaranteed to return true given the results shown below? Assume str1 and str2 are objects of the String class.
 
-> str1 = "I am a string"
-> str2 = "I am a string"
-> p str1
-"I am a string"
-> p str2
-"I am a string"
+# > str1 = "I am a string"
+# > str2 = "I am a string"
+# > p str1
+# "I am a string"
+# > p str2
+# "I am a string"
 
 str1 == str2 # true
 str1.equal?(str2) #false
