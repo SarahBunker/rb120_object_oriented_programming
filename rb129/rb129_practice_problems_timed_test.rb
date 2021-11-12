@@ -187,7 +187,40 @@ rocky = Dog.new
 me = Person.new(rocky)
 
 # Now `rocky` is a part of my state as a pet that my `Person` object can interact with. Collaborator objects can be from custom classes such as `rocky`, but they can also be from the standard and core library such as `String`s, `Array`s, `Integer`s... etc.
-# 23
-# 24
-# 25
+# 23 Fake operators like * + and []= are common methods to add to our custom classes. I like to use comparison as an example. In this example we are going to create a class and then add overide the method `==` so we can compare our objects with something besides whether they are the same object.
+
+
+class Circle
+  attr_reader :r
+  def initialize(r)
+    @r = r
+  end
+  
+  def ==(other_circle)
+    r == other_circle.r
+  end
+end
+
+c1 = Circle.new(3)
+c2 = Circle.new(4)
+
+p c1 == c2
+# 24 Within a class definition the keyword `self` refers to the instance if it is used within an instance variable or it refers to the class. When refering to a class it is used to define class methods for that class by prepending the method name with class.
+
+class Cat
+  puts "I am #{self}"
+  
+  def self.stand_for
+    puts "#{self} stand for more lazy days."
+  end
+  
+  def wants
+    puts "This #{self.class} wants more milk too."
+  end
+end
+
+Cat.stand_for
+Cat.new.wants
+
+# 25 The instance variable `@name` was initialized within the `initialize` method, but is accessible in the `get_name` method. This is because instance variables are scoped to within the class and subclas
 

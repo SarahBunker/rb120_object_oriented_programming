@@ -11,9 +11,9 @@ class Superhero
   
   def self.fight_crime
     puts "I am #{self}!"
-    a_hero = Superhero.new("")
-    a_hero.ability = Ability.new("coding skills").description
-    a_hero.announce_ability
+    hero = Superhero.new("")
+    hero.ability = Ability.new("coding skills ability").description
+    hero.announce_ability
   end
   
   def initialize(name)
