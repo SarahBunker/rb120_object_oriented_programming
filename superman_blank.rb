@@ -1,6 +1,6 @@
 module Flightable
   def fly
-    puts "I am #{@name}, I am a #{self.class.to_s.downcase}, and I can fly!"
+    # IMPLEMENTATION
   end
 end
 
@@ -10,10 +10,7 @@ class Superhero
   attr_accessor :ability
   
   def self.fight_crime
-    puts "I am #{self}!"
-    a_hero = Superhero.new("")
-    a_hero.ability = Ability.new("coding skills").description
-    a_hero.announce_ability
+    # IMPLEMENTATION
   end
   
   def initialize(name)
