@@ -39,4 +39,4 @@ LSMan.fight_crime
 # => I fight crime with my coding skills ability!
 
 
-# Can only change 2 methods where you see #IMPLEMENTATION . I want you to use the Ability class. superman.fly and LSMan.fight_crime  should produce the commented outputs below them and the words LSMan, Superman, superhero and coding skills should be interpolated.
+# Can only change 2 methods where you see #IMPLEMENTATION . I want you to use the Ability class. superman.fly and LSMan.fight_crime  should produce the commented outputs below them and the words LSMan, Superman, superhero, fly and coding skills should be interpolated.
